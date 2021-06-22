@@ -1,0 +1,6 @@
+*.jar
+worlds/**
+logs/**
+
+plugins/**/*.*db
+plugins/**/*.bak
