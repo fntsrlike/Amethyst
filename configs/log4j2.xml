@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    More log4j example configs can be found at
+    <http://logging.apache.org/log4j/2.x/manual/appenders.html>.
+-->
+
+<Configuration status="WARN" packages="net.minecraft,com.mojang">
+	<Appenders>
+		<Console name="SysOut" target="SYSTEM_OUT">
+			<PatternLayout pattern="[%d{yyyy-MM-dd} %d{HH:mm:ss}] [%t/%level]: %msg%n" />
+		</Console>
+		<Queue name="TerminalConsole">
+            <PatternLayout pattern="%d{HH:mm:ss} [%level] %msg%n" />
+        </Queue>
+		<RollingRandomAccessFile name="File"
+                                 fileName="../../logs/latest.log"
+			                     filePattern="../../logs/$${date:yyyy-MM}/%d{yyyy-MM-dd}-%i.log.gz">
+			<PatternLayout pattern="[%d{yyyy-MM-dd}T%d{HH:mm:ss}] [%t/%level]: %msg%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<OnStartupTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="100 MB"/>
+			</Policies>
+			<DefaultRolloverStrategy max="30"/>
+		</RollingRandomAccessFile>
+	</Appenders>
+	<Loggers>
+		<Root level="info">
+			<filters>
+				<MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL" />
+			</filters>
+			<AppenderRef ref="SysOut"/>
+			<AppenderRef ref="File"/>
+			<AppenderRef ref="TerminalConsole"/>
+		</Root>
+	</Loggers>
+</Configuration>
