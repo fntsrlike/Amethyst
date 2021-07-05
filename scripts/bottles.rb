@@ -108,8 +108,8 @@ lockfile['source'] = bottles.source
 lockfile['server'] = bottles.server
 lockfile['plugins'] = {}
 
-plugins.each do |name, version|
-  next if version.nil?
+valid_plugins.each do |name|
+  version = plugins[name]
   lockfile['plugins'][name] = version
 end
 
