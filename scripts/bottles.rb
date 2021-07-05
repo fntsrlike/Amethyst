@@ -34,18 +34,19 @@ unless File.exists?(src_server_jar_path)
 end
 puts "Server: #{src_server_filename}"
 
-puts "Plugins:"
+exist_proportion = "#{required_plugins.count}/#{plugins.keys.count}"
+puts "Plugins: (#{exist_proportion})"
 if valid_plugins.count > 0
   list = valid_plugins.map {|name| "#{name} #{plugins[name]}"}
-  puts "  Valid: \n    - #{list.join("\n    - ")}"
+  puts "  Valid: (#{valid_plugins.count})\n    - #{list.join("\n    - ")}"
 end
 
 if ignored_plugins.count > 0
-  puts "  Ignore: \n    - #{ignored_plugins.join("\n    - ")}"
+  puts "  Ignore: (#{ignored_plugins.count})\n    - #{ignored_plugins.join("\n    - ")}"
 end
 
 if not_found_plugins.count > 0
-  puts "  Not Founnd: \n    - #{not_found_plugins.join("\n    - ")}"
+  puts "  Not Founnd: (#{not_found_plugins.count})\n    - #{not_found_plugins.join("\n    - ")}"
   puts "\nvalidation failed, please check version source or config."
   exit
 end
