@@ -23,7 +23,7 @@ src_server_filename = "#{server.name}-#{server.version}.jar"
 src_server_jar_path = "#{SOURCE_PATH}/servers/#{src_server_filename}"
 src_plugins_dir_path = "#{SOURCE_PATH}/plugins"
 
-required_plugins = plugins.keys.select { |name| plugins[name].to_s.match(/^\d+\.\d+(\.\d)?/) }
+required_plugins = plugins.keys.select { |name| plugins[name].to_s.match(/^(\w*-)?\w+\.\w+(\.\w+)?(-[\w.-]*)*/) }
 ignored_plugins = plugins.keys.select { |name| plugins[name].nil? }
 valid_plugins = required_plugins.select { |name| File.exists?("#{src_plugins_dir_path}/#{name}-#{plugins[name]}.jar") }
 not_found_plugins = required_plugins - valid_plugins
