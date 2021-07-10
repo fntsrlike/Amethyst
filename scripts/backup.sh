@@ -1,16 +1,15 @@
 #!/bin/bash
 source "./lib/common.sh"
 
-BACKUP_DATE_DIR=${BACKUP_ROOT_DIR}/$(date +"%Y-%m-%d_%H.%M.%S")
-[ ! -d "${BACKUP_DATE_DIR}/" ] && mkdir -p "${BACKUP_DATE_DIR}/"
+BACKUP_DIR=${BAK_SNAPSHOT_DIR}/$(date +"%Y-%m-%d_%H.%M.%S")
+[ ! -d "${BACKUP_DIR}/" ] && mkdir -p "${BACKUP_DIR}/"
 
 cd $SERVER_DIR
 
 echo "src: $SERVER_DIR"
-echo "dest: $BACKUP_DATE_DIR"
+echo "dest: $BACKUP_DIR"
 
-rsync -avzHP -f "merge $SERVER_DIR/configs/backup-plugins.rsync" ./ $BACKUP_DATE_DIR
-# rsync -avzHP -f "merge ${CONFIG_DIR}/backup-plugins.rsync" ../ $BACKUP_DATE_DIR
+rsync -avzHP -f "merge ${CONFIGS_DIR}/backup-plugins.rsync" ./ $BACKUP_DIR
 
 # -v, --verbose               increase verbosity
 # -z, --compress              compress file data during the transfer
