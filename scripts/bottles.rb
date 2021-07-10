@@ -34,10 +34,17 @@ src_server_filename = "#{server.name}-#{server.version}.jar"
 src_server_jar_path = "#{SOURCE_PATH}/servers/#{src_server_filename}"
 src_plugins_dir_path = "#{SOURCE_PATH}/plugins"
 
-required_plugins = plugins.keys.select { |name| plugins[name].to_s.match(/^(\w*-)?\w+\.\w+(\.\w+)?(-[\w.-]*)*/) }
-ignored_plugins = plugins.keys.select { |name| plugins[name].nil? }
-valid_plugins = required_plugins.select { |name| File.definitely_exists?("#{src_plugins_dir_path}/#{name}-#{plugins[name]}.jar") }
-not_found_plugins = required_plugins - valid_plugins
+# [ServerType-]<SemanticVersionNumber>[-Phase][-BuildVersion]
+#   ServerType: bukkit, spigot, bungeecord, paper, build
+#   Phase: alpha, beta, rc, dist, SNAPSHOT
+#   BuildVersion: pipeline number, git commit hash
+version_convension = /^(\w+-)?(\d+)(\.\d+)(\.\d+)?((-\w+)(-\w+)?)?/
+
+no_version_plugins = plugins.keys.select { |name| plugins[name].nil? }
+valid_plugins = plugins.keys.select { |name| plugins[name].to_s.match(version_convension) }
+invalid_plugins = plugins.keys - valid_plugins - no_version_plugins
+exist_plugins = valid_plugins.select { |name| File.definitely_exists?("#{src_plugins_dir_path}/#{name}-#{plugins[name]}.jar") }
+not_found_plugins = valid_plugins - exist_plugins
 
 unless File.definitely_exists?(src_server_jar_path)
   puts "Error! #{src_server_filename} not found."
@@ -45,19 +52,30 @@ unless File.definitely_exists?(src_server_jar_path)
 end
 puts "Server: #{src_server_filename}"
 
-exist_proportion = "#{required_plugins.count}/#{plugins.keys.count}"
+exist_proportion = "#{valid_plugins.count}/#{plugins.keys.count}"
 puts "Plugins: (#{exist_proportion})"
-if valid_plugins.count > 0
-  list = valid_plugins.map {|name| "#{name} #{plugins[name]}"}
-  puts "  Valid: (#{valid_plugins.count})\n    - #{list.join("\n    - ")}"
-end
-
-if ignored_plugins.count > 0
-  puts "  Ignore: (#{ignored_plugins.count})\n    - #{ignored_plugins.join("\n    - ")}"
+if exist_plugins.count > 0
+  list = exist_plugins.map {|name| "#{name}: #{plugins[name]}"}
+  puts "  Exist: (#{exist_plugins.count})\n    - #{list.join("\n    - ")}"
 end
 
 if not_found_plugins.count > 0
-  puts "  Not Founnd: (#{not_found_plugins.count})\n    - #{not_found_plugins.join("\n    - ")}"
+  list = not_found_plugins.map {|name| "#{name}: #{plugins[name]}"}
+  puts "  Not Found: (#{not_found_plugins.count})\n    - #{list.join("\n    - ")}"
+end
+
+if invalid_plugins.count > 0
+  list = invalid_plugins.map {|name| "#{name}: #{plugins[name]}"}
+  puts "  Ignore (invalid version name): (#{invalid_plugins.count})\n    - #{list.join("\n      - ")}"
+end
+
+if no_version_plugins.count > 0
+  list = no_version_plugins
+  puts "  Ignore (empty version name): (#{no_version_plugins.count})\n    - #{list.join("\n      - ")}"
+end
+
+validation_result = (not_found_plugins.count == 0)
+unless validation_result
   puts "\nvalidation failed, please check version source or config."
   exit
 end
@@ -103,7 +121,7 @@ rescue
 end
 
 begin
-  valid_plugins.each do |name|
+  exist_plugins.each do |name|
     plugin_file_name = "#{name}-#{plugins[name]}.jar"
     FileUtils.cp("#{src_plugins_dir_path}/#{plugin_file_name}", "#{PLUGIN_DIR_PATH}/#{name}.jar")
   end
@@ -119,7 +137,7 @@ lockfile['source'] = bottles.source
 lockfile['server'] = bottles.server
 lockfile['plugins'] = {}
 
-valid_plugins.each do |name|
+exist_plugins.each do |name|
   version = plugins[name]
   lockfile['plugins'][name] = version
 end

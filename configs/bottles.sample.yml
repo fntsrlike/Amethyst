@@ -1,8 +1,16 @@
+# Convention
+#   Plugin name use Pascal Case
+#   Plugin version use Lower Case, except SNAPSHOT use All caps
+# Naming Format:
+#   [ServerType-]<SemanticVersionNumber>[-Phase][-BuildVersion]
+#     ServerType: bukkit, spigot, bungeecord, paper, build
+#     Phase: alpha, beta, rc, dist, SNAPSHOT
+#     BuildVersion: pipeline number, git commit hash
 source: ../../../bottles
 server:
   name: spigot
   version: 1.17
 plugins:
-  Dynmap: 3.2-beta-1-spigot
-  LuckPerms-Bukkit: 5.3.47
+  Dynmap: spigot.3.2-beta-1
+  LuckPerms: bukkit-5.3.47
   ProtocolLib: 4.7.0-SNAPSHOT
