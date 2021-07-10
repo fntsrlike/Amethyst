@@ -1,6 +1,7 @@
 *.jar
 worlds/**
 logs/**
+_backup/**
 
 plugins/**/*.*db
 plugins/**/*.bak
