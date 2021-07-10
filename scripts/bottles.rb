@@ -5,6 +5,17 @@ require 'date'
 require 'yaml'
 require 'fileutils'
 
+class File
+  # Does a case-sensitive check for file existence.
+  # Unlike the normal File.definitely_exists? method on OS X with its case-insensitive-by-default FS
+  def self.definitely_exists? path
+    folder = File.dirname path
+    filename = File.basename path
+    # Unlike Ruby IO, ls, and find -f, this technique will fail to locate the file if the case is wrong:
+    not %x( find "#{folder}" -name "#{filename}" ).empty?
+  end
+end
+
 SERVER_DIR_PATH = '..'
 CONFIG_DIR_PATH = '../configs'
 PLUGIN_DIR_PATH = '../plugins'
@@ -25,10 +36,10 @@ src_plugins_dir_path = "#{SOURCE_PATH}/plugins"
 
 required_plugins = plugins.keys.select { |name| plugins[name].to_s.match(/^(\w*-)?\w+\.\w+(\.\w+)?(-[\w.-]*)*/) }
 ignored_plugins = plugins.keys.select { |name| plugins[name].nil? }
-valid_plugins = required_plugins.select { |name| File.exists?("#{src_plugins_dir_path}/#{name}-#{plugins[name]}.jar") }
+valid_plugins = required_plugins.select { |name| File.definitely_exists?("#{src_plugins_dir_path}/#{name}-#{plugins[name]}.jar") }
 not_found_plugins = required_plugins - valid_plugins
 
-unless File.exists?(src_server_jar_path)
+unless File.definitely_exists?(src_server_jar_path)
   puts "Error! #{src_server_filename} not found."
   exit
 end
@@ -56,7 +67,7 @@ puts "\nPassed validation!"
 puts "\nTo remove old jar files..."
 begin
   server_jar_path = "#{SERVER_DIR_PATH}/server.jar"
-  File.delete(server_jar_path) if File.exists?(server_jar_path)
+  File.delete(server_jar_path) if File.definitely_exists?(server_jar_path)
   puts "Deleted server.jar"
 rescue
   puts "Error! Can't delete server.jar"
