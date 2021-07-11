@@ -1,0 +1,14 @@
++ /plugins/
++ /plugins/CoreProtect/
++ /plugins/CoreProtect/database.db
++ /plugins/AdminCMD/
++ /plugins/AdminCMD/Database.db
++ /plugins/LuckPerms/
++ /plugins/LuckPerms/luckperms-h2.mv.db
++ /plugins/TreeLogging/
++ /plugins/TreeLogging/treelogging.sqlite3
+
++ /worlds/
++ /worlds/***
+
+- /**
