@@ -13,10 +13,10 @@ cd $SERVER_DIR
 echo "Backup before sync.."
 echo "src: $SERVER_DIR"
 echo "dest: $BACKUP_DIR"
-rsync -avzHP -f "merge $CONFIGS_DIR/configs/sync-from-prod.rsync" ./ $BACKUP_DIR
+rsync -avzHP -f "merge $CONFIGS_DIR/sync-from-prod.rsync" ./ $BACKUP_DIR
 
 cd $PROD_DIR_ABSOLUTE
 echo "Begin sync.."
 echo "src: $PROD_DIR_ABSOLUTE"
 echo "dest: $SERVER_DIR"
-rsync -avzHPIL -f "merge $CONFIGS_DIR/configs/sync-from-prod.rsync" ./ $SERVER_DIR
+rsync -avzHPIL -f "merge $CONFIGS_DIR/sync-from-prod.rsync" ./ $SERVER_DIR
